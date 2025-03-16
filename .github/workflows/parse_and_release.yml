@@ -1,0 +1,57 @@
+name: "Parse and Release"
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 6"
+
+jobs:
+  create-prerelease:
+    name: Create Prerelease
+    if: github.event_name == 'push' || github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Delete Continuous Release
+        run: gh release delete continuous --cleanup-tag || true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Create Prerelease Tag
+        id: create_prerelease_tag
+        run: |
+          gh release create continuous -p -t 'Continuous Checking'
+          - - -
+          "
+          # Make sure draft is false
+          gh release edit continuous --draft=false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  static-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: get data
+        env:
+          API_KEY: ${{ secrets.API_KEY }}
+        run: |
+          "${GITHUB_WORKSPACE}/openai-models-json.sh" > /tmp/models.json
+        shell: bash
+      - name: Prerelease list
+        if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+        uses: softprops/action-gh-release@v2
+        with:
+          files: /tmp/models.json
+          prerelease: true
+          draft: false
+          tag_name: continuous
+          name: Continuous Checking
+      - name: Upload Github Assets
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: /tmp/models.json
+          name: OpenAI Models List
