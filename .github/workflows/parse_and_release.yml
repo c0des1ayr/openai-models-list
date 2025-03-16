@@ -28,13 +28,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  static-build:
+  get-list:
+    permissions: write-all
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: get data
+      - name: Get Data
         env:
           API_KEY: ${{ secrets.API_KEY }}
         run: |
