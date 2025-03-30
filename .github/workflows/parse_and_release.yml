@@ -21,7 +21,7 @@ jobs:
       - name: Create Prerelease Tag
         id: create_prerelease_tag
         run: |
-          gh release create continuous -p -t 'Continuous Checking'
+          gh release create continuous -p -t 'Continuous Checking' || true
           - - -
           "
           # Make sure draft is false
