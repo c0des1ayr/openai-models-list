@@ -22,10 +22,8 @@ jobs:
         id: create_prerelease_tag
         run: |
           gh release create continuous -p -t 'Continuous Checking' || true
-          - - -
-          "
           # Make sure draft is false
-          gh release edit continuous --draft=false
+          gh release edit continuous --draft=false || true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
