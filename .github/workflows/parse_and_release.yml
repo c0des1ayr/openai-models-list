@@ -9,8 +9,8 @@ on:
 jobs:
   create-prerelease:
     permissions: write-all
-    name: Create Prerelease
-    if: github.event_name == 'push' || github.event_name == 'schedule'
+    name: Recreate Prerelease
+    if: github.event_name == 'push' || github.event_name == 'schedule'|| github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -38,7 +38,7 @@ jobs:
           "${GITHUB_WORKSPACE}/openai-models-json.sh" > /tmp/models.json
         shell: bash
       - name: Prerelease list
-        if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+        if: github.event_name == 'workflow_dispatch' || github.event_name == 'push' || github.event_name == 'schedule'
         uses: softprops/action-gh-release@v2
         with:
           files: /tmp/models.json
