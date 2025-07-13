@@ -46,10 +46,9 @@ jobs:
           tag_name: continuous
           name: Continuous Checking
       - name: Upload Github Assets
-        if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
+        if: github.ref_type == 'tag'
         with:
           files: /tmp/models.json
           name: OpenAI Models List
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
